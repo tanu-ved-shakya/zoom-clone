@@ -8,7 +8,7 @@ A full-stack video conferencing web application clone replicating the modern **Z
 
 1. **Dashboard (Zoom Workplace UI)**
    - Top Navigation bar with Zoom branding, universal search, product launcher, notifications, and profile details.
-   - Quick action grid: **New Meeting**, **Join Meeting**, **Schedule**, and **Share Screen**.
+   - Quick action grid: **New Meeting**, **Join Meeting** and **Schedule Meeting**.
    - **Upcoming Meetings** section with direct launch, date badges, and copyable invite links.
    - **Recent Meetings** section showing history, ended status, and attendee statistics.
 
