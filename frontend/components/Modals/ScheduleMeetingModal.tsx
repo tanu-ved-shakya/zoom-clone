@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, Calendar, Clock, Globe, Shield, Loader2 } from 'lucide-react';
+import { X, Calendar, Shield, Loader2 } from 'lucide-react';
 import { createScheduledMeeting, Meeting } from '@/lib/api';
 
 interface ScheduleMeetingModalProps {
@@ -17,17 +17,11 @@ export default function ScheduleMeetingModal({
 }: ScheduleMeetingModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('2026-10-10');
+  const [date, setDate] = useState(() => { const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); return tomorrow.toISOString().split('T')[0]; });
   const [time, setTime] = useState('10:00');
   const [duration, setDuration] = useState(45);
   const [timezone, setTimezone] = useState('America/New_York');
   const [loading, setLoading] = useState(false);
-
-  React.useEffect(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    setDate(tomorrow.toISOString().split('T')[0]);
-  }, []);
 
   if (!isOpen) return null;
 

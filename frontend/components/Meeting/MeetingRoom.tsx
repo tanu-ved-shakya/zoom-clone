@@ -10,18 +10,11 @@ import {
   Share2,
   Users,
   MessageSquare,
-  Smile,
-  Shield,
   PhoneOff,
   Copy,
   Check,
-  Maximize,
-  Minimize,
-  MoreVertical,
-  Volume2,
   X,
   Send,
-  UserCheck,
   UserX
 } from 'lucide-react';
 import {
@@ -29,8 +22,8 @@ import {
   Participant,
   fetchMeeting,
   endMeeting,
+  leaveMeeting,
   toggleParticipantMute,
-  toggleParticipantVideo,
   muteAllParticipants,
   removeParticipant
 } from '@/lib/api';
@@ -58,7 +51,7 @@ export default function MeetingRoom({ meetingId }: MeetingRoomProps) {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
-  const [reactions, setReactions] = useState<{ id: number; emoji: string }[]>([]);
+  const [reactions, setReactions] = useState<{ id: string; emoji: string }[]>([]);
 
   // In-meeting Chat State
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([
@@ -76,14 +69,14 @@ export default function MeetingRoom({ meetingId }: MeetingRoomProps) {
 
   // Poll meeting info and initialize display name
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-
     const savedName = sessionStorage.getItem('zoom_display_name');
-    if (savedName) {
-      setMyDisplayName(savedName);
-    } else {
-      setShowNameModal(true);
-    }
+    const nameTimer = window.setTimeout(() => {
+      if (savedName) {
+        setMyDisplayName(savedName);
+      } else {
+        setShowNameModal(true);
+      }
+    }, 0);
 
     const loadData = async () => {
       try {
@@ -96,15 +89,19 @@ export default function MeetingRoom({ meetingId }: MeetingRoomProps) {
         );
         setParticipants(others);
         setLoading(false);
-      } catch (err: any) {
-        setError(err.message || 'Unable to connect to meeting.');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unable to connect to meeting.');
         setLoading(false);
       }
     };
 
     loadData();
-    interval = setInterval(loadData, 4000);
-    return () => clearInterval(interval);
+    const interval = setInterval(loadData, 4000);
+
+    return () => {
+      window.clearTimeout(nameTimer);
+      clearInterval(interval);
+    };
   }, [meetingId]);
 
   // Request actual camera feed if available (gracefully fallback if permission denied)
@@ -147,9 +144,14 @@ export default function MeetingRoom({ meetingId }: MeetingRoomProps) {
     if (confirm('Are you sure you want to leave this meeting?')) {
       if (meeting) {
         try {
-          await endMeeting(meeting.meeting_code);
+          const isHost = meeting.host?.display_name.toLowerCase() === myDisplayName.toLowerCase();
+          if (isHost) {
+            await endMeeting(meeting.meeting_code);
+          } else {
+            await leaveMeeting(meeting.meeting_code, myDisplayName);
+          }
         } catch (e) {
-          // Ignore
+          console.error('Unable to leave meeting cleanly:', e);
         }
       }
       router.push('/');
@@ -172,7 +174,7 @@ export default function MeetingRoom({ meetingId }: MeetingRoomProps) {
   };
 
   const sendReaction = (emoji: string) => {
-    const id = Date.now();
+    const id = crypto.randomUUID();
     setReactions((prev) => [...prev, { id, emoji }]);
     setTimeout(() => {
       setReactions((prev) => prev.filter((r) => r.id !== id));

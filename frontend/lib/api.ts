@@ -102,6 +102,16 @@ export async function joinMeeting(identifier: string, displayName: string, userI
   return res.json();
 }
 
+export async function leaveMeeting(identifier: string, displayName: string): Promise<Participant> {
+  const res = await fetch(`${API_BASE_URL}/api/meetings/${identifier}/leave`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ display_name: displayName }),
+  });
+  if (!res.ok) throw new Error('Failed to leave meeting');
+  return res.json();
+}
+
 export async function startMeeting(identifier: string): Promise<Meeting> {
   const res = await fetch(`${API_BASE_URL}/api/meetings/${identifier}/start`, {
     method: 'POST',

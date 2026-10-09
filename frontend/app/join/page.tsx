@@ -38,8 +38,8 @@ export default function JoinPage() {
       await joinMeeting(meeting.meeting_code, displayName);
       sessionStorage.setItem('zoom_display_name', displayName);
       router.push(`/meeting/${meeting.meeting_code}`);
-    } catch (err: any) {
-      setError(err.message || 'Meeting not found. Please double check the ID.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Meeting not found. Please double check the ID.');
       setLoading(false);
     }
   };

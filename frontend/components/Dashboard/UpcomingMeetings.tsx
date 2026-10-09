@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Calendar, Clock, Copy, Check, Play, User as UserIcon } from 'lucide-react';
 import { Meeting } from '@/lib/api';
 
@@ -11,7 +10,6 @@ interface UpcomingMeetingsProps {
 }
 
 export default function UpcomingMeetings({ meetings, onStartMeeting }: UpcomingMeetingsProps) {
-  const router = useRouter();
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const handleCopy = (code: string) => {
@@ -104,7 +102,7 @@ export default function UpcomingMeetings({ meetings, onStartMeeting }: UpcomingM
                   </div>
                   {meeting.description && (
                     <p className="text-xs text-gray-500 mt-2 line-clamp-1 italic">
-                      "{meeting.description}"
+                      &quot;{meeting.description}&quot;
                     </p>
                   )}
                 </div>

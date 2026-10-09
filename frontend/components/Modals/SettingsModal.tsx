@@ -42,18 +42,18 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
 
             <nav className="space-y-1">
-              {[
+              {([
                 { id: 'general', label: 'General', icon: Monitor },
                 { id: 'video', label: 'Video', icon: Video },
                 { id: 'audio', label: 'Audio', icon: Mic },
                 { id: 'notifications', label: 'Notifications', icon: Bell },
-              ].map((tab) => {
+              ] as const).map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center space-x-3 px-3 py-2 rounded-xl text-xs font-semibold transition ${
                       isActive
                         ? 'bg-[#0E71EB] text-white shadow-sm'

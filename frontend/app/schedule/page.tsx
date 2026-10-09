@@ -3,24 +3,18 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar/Navbar';
-import { Calendar, Clock, Globe, Shield, ArrowRight, Loader2 } from 'lucide-react';
+import { Calendar, Shield, ArrowRight, Loader2 } from 'lucide-react';
 import { createScheduledMeeting } from '@/lib/api';
 
 export default function SchedulePage() {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [date, setDate] = useState('2026-10-10');
+  const [date, setDate] = useState(() => { const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1); return tomorrow.toISOString().split('T')[0]; });
   const [time, setTime] = useState('11:00');
   const [duration, setDuration] = useState(45);
   const [timezone, setTimezone] = useState('America/New_York');
   const [loading, setLoading] = useState(false);
-
-  React.useEffect(() => {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    setDate(tomorrow.toISOString().split('T')[0]);
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

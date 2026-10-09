@@ -200,6 +200,27 @@ def join_meeting(
     db.refresh(participant)
     return participant
 
+@router.post("/{identifier}/leave", response_model=schemas.ParticipantOut)
+def leave_meeting(
+    identifier: str,
+    payload: schemas.MeetingJoinRequest,
+    db: Session = Depends(get_db)
+):
+    meeting = get_meeting(identifier, db)
+    participant = db.query(models.Participant).filter(
+        models.Participant.meeting_id == meeting.id,
+        models.Participant.display_name == payload.display_name,
+        models.Participant.status == "joined"
+    ).first()
+    if not participant:
+        raise HTTPException(status_code=404, detail="Joined participant not found")
+
+    participant.status = "left"
+    participant.left_at = datetime.datetime.utcnow().isoformat()
+    db.commit()
+    db.refresh(participant)
+    return participant
+
 @router.get("/{identifier}/participants", response_model=List[schemas.ParticipantOut])
 def get_meeting_participants(identifier: str, db: Session = Depends(get_db)):
     meeting = get_meeting(identifier, db)

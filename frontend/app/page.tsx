@@ -13,14 +13,14 @@ import NewMeetingModal from '@/components/Modals/NewMeetingModal';
 import JoinMeetingModal from '@/components/Modals/JoinMeetingModal';
 import ScheduleMeetingModal from '@/components/Modals/ScheduleMeetingModal';
 import { User, Meeting, fetchCurrentUser, fetchMeetings } from '@/lib/api';
-import { Video, Calendar, Clock, Sparkles } from 'lucide-react';
+import { Video, Sparkles } from 'lucide-react';
 
 export default function Dashboard() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [upcomingMeetings, setUpcomingMeetings] = useState<Meeting[]>([]);
   const [recentMeetings, setRecentMeetings] = useState<Meeting[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   // Modals
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
@@ -64,7 +64,8 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    loadData();
+    const timer = window.setTimeout(() => { void loadData(); }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const handleStartDirect = (code: string) => {
@@ -135,6 +136,23 @@ export default function Dashboard() {
         onClose={() => setIsScheduleModalOpen(false)}
         onScheduled={(newMeeting) => {
           setUpcomingMeetings((prev) => [newMeeting, ...prev]);
+        }}
+      />
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
+      <NotificationsModal
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+      />
+      <AuthModal
+        isOpen={isAuthOpen}
+        currentUser={user}
+        onClose={() => setIsAuthOpen(false)}
+        onUserUpdate={(updatedUser) => {
+          setUser(updatedUser);
+          sessionStorage.setItem('current_user', JSON.stringify(updatedUser));
         }}
       />
     </div>
