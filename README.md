@@ -2,6 +2,12 @@
 
 A full-stack video conferencing web application clone replicating the modern **Zoom Workplace** interface, design language, and core meeting workflows.
 
+## 🌐 Live Demo
+
+- **Frontend:** https://frontend-six-green-25.vercel.app/
+- **Backend API:** https://zoom-clone-api-production-a66f.up.railway.app/
+- **API documentation:** https://zoom-clone-api-production-a66f.up.railway.app/docs
+
 ---
 
 ## 🌟 Key Features
@@ -36,6 +42,26 @@ A full-stack video conferencing web application clone replicating the modern **Z
      - **Live In-Meeting Chat**: Send and receive instant messages with timestamping
      - **Reactions**: Animated emoji reactions (👏, 👍, ❤️, 🎉)
      - **End Meeting**: Graceful leave / meeting closure
+
+## ✅ Implemented vs Demo Scope
+
+The required meeting workflows are fully wired to the FastAPI backend and SQLite database:
+
+- Dashboard meeting listings
+- Instant meeting creation
+- Meeting ID and invite-token lookup
+- Display-name-based joining and leaving
+- Meeting scheduling
+- Participant listing and host controls
+- Meeting end-state handling
+
+The following features are intentionally lightweight demo implementations rather than a production media stack:
+
+- Camera and microphone access provides a local browser preview when permissions are granted.
+- Participant updates use polling rather than WebSockets.
+- Chat and reactions are local to the current browser session.
+- Screen sharing is represented by a UI control; browser `getDisplayMedia` and media signaling are not implemented.
+- Login/signup is a client-side demonstration because the assignment permits a default logged-in user. It does not create accounts, verify passwords, issue sessions, or protect API routes.
 
 ---
 
@@ -131,3 +157,8 @@ Frontend web app will be accessible at `http://localhost:3000`.
 1. **Default Logged-in User**: As instructed, user authentication is assumed with a default active user (**Alex Morgan**) pre-seeded in the database to showcase host privileges.
 2. **WebRTC & Video Fallback**: The meeting room queries user webcam/mic via `navigator.mediaDevices.getUserMedia` when granted; if cameras are unavailable or permissions denied, high-fidelity Zoom profile initials/avatars are automatically displayed.
 3. **Responsive Design**: Designed responsively for desktop, tablet, and mobile views with collapsible sidebars and floating controls.
+4. **Deployment storage**: Railway runs the backend with SQLite on container storage. Because no persistent volume is configured, data can reset after a redeploy or container restart. Local development continues to use `backend/zoom_clone.db`.
+
+## 🚀 Deployment
+
+The frontend is deployed on Vercel and the backend is deployed on Railway using the root [Dockerfile](./Dockerfile) and [railway.toml](./railway.toml). Render configuration is not used by this project.
